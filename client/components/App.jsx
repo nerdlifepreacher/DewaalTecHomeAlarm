@@ -1,18 +1,23 @@
 import React from 'react'
+import { HashRouter as Router, Route, Link } from "react-router-dom";
+import { connect } from "react-redux";
 
-import ErrorMessage from './ErrorMessage'
-import LoadSubreddit from './LoadSubreddit'
-import SubredditList from './SubredditList'
-import WaitIndicator from './WaitIndicator'
+import Login from './Login'
 
-const App = () => (
-  <div className='app'>
-    <ErrorMessage />
-    <LoadSubreddit>
-      <WaitIndicator />
-    </LoadSubreddit>
-    <SubredditList />
-  </div>
-)
 
-export default App
+export function App({ auth }) {
+  return (
+   
+    <Router>
+      <Route exact path="/" component={Login} />
+    </Router>
+  );
+}
+
+const mapStateToProps = ({ auth }) => {
+  return {
+    auth
+  };
+};
+
+export default connect(mapStateToProps)(App);

@@ -2,16 +2,37 @@ const path = require('path')
 const express = require('express')
 const webpush = require('web-push')
 const alarmRoutes = require('./routes/data')
-const authRoutes = require('./routes/auth')
-
+const auth = require('./routes/api/auth')
+const users = require('./routes/api/users')
 const server = express()
+const mongoose = require('mongoose')
+require('dotenv').config()
+const db = process.env.MONGOURI
+const JWT_SECRET = process.env.JWT_SECRET
 
+
+//middleware
 server.use(express.static(path.join(__dirname, '../public')))
 server.use(express.static(__dirname + '/node_modules/bootstrap/dist'));
-
 server.use(express.urlencoded({ extended: true }))
-server.use('/', alarmRoutes)
 server.use(express.json())
+
+//routes
+server.use('/', alarmRoutes)
+server.use('/api/users', users)
+server.use('/api/auth', auth)
+
+
+mongoose
+  .connect(db, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useCreateIdex: true
+  })
+  
+  .then(() => console.log('Mongo Database connected'))
+  .catch(err => console.log(err))
+
 
 
 const publicVapidKey =
@@ -23,7 +44,7 @@ webpush.setVapidDetails(
   publicVapidKey,
   privateVapidKey
 );
-const payload = JSON.stringify({ title: "DeWaalTec Home alarm", body:"The truth is out there"});
+
 server.post("/subscribe", (req, res,) => {
     let message = req.body.message                                                                      
     const subscription = req.body.subscription;

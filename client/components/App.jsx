@@ -1,17 +1,27 @@
 import React from 'react'
 import { HashRouter as Router, Route, Link } from "react-router-dom";
 import { connect } from "react-redux";
+import AppNavbar from './Navbar'
+import {loadUser} from '../actions/authActions'
+import LoginModal from './auth/loginModal'
+import RegisterNodal from './auth/RegisterModal'
+import Subscribe from './Subscribe'
+  // componentDidMount() {
+  //  store.dispatch(loadUser)
+  // }
 
-import Login from './Login'
 
+class App extends React.Component {
 
-export function App({ auth }) {
-  return (
-   
-    <Router>
-      <Route exact path="/" component={Login} />
-    </Router>
-  );
+  render() {
+    return (    
+      <Router>
+      <AppNavbar />
+        <Route exact path="/" component={LoginModal} />
+        <Route path="/register" component={RegisterNodal} />
+      </Router>
+    )
+  }
 }
 
 const mapStateToProps = ({ auth }) => {

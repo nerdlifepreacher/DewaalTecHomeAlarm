@@ -1,11 +1,9 @@
-import {combineReducers} from 'redux'
+import { combineReducers } from 'redux'
+import error from './errorRuducer'
+import auth from './authReducer'
 
-import errorMessage from './error-message'
-import subreddits from './subreddits'
-import waiting from './waiting'
 
 export default combineReducers({
-  errorMessage,
-  subreddits,
-  waiting
+    error,
+    auth
 })

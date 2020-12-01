@@ -1,8 +1,9 @@
 import React from 'react'
-import { Card, ListGroup, ListGroupItem } from 'react-bootstrap'
+import { Card, ListGroup, ListGroupItem } from 'reactstrap'
 
 const Login = ({ title }) => (
-    <div style={{ height: "100vh" }}>
+    <div style={{
+        height: "100vh" }}>
     <div className="container h-100 ">
     <div className="row h-100 justify-content-center align-items-center">
         <div className="">

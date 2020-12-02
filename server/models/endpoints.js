@@ -7,8 +7,11 @@ const EndpointSchema = new Schema({
         required: true
     },
     endpoint: {
-    type: String,
-    required: true
+        type: String,
+        required: true
+    },
+    shortName: {
+        type:String   
     }
 })
 

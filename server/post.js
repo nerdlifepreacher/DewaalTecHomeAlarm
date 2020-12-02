@@ -1,5 +1,6 @@
-const fetch = require('node-fetch');
+const fetch = require('node-fetch')
 
+// send a payload to /subscribe route
 async function send(message) {
     const baseURL = 'http://localhost:3000/subscribe'
     let master = {

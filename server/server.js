@@ -6,10 +6,11 @@ const auth = require('./routes/api/auth')
 const users = require('./routes/api/users')
 const server = express()
 const mongoose = require('mongoose')
+
 require('dotenv').config()
 const db = process.env.MONGOURI
-const JWT_SECRET = process.env.JWT_SECRET
-
+const publicVapidKey = process.env.PUBLICVAPIDKEY
+const privateVapidKey = process.env.PRIVATEVAPIDKEY
 
 //middleware
 server.use(express.static(path.join(__dirname, '../public')))
@@ -22,7 +23,7 @@ server.use('/', alarmRoutes)
 server.use('/api/users', users)
 server.use('/api/auth', auth)
 
-
+//connect to mongo atlas cloud DB
 mongoose
   .connect(db, {
     useNewUrlParser: true,
@@ -33,18 +34,14 @@ mongoose
   .then(() => console.log('Mongo Database connected'))
   .catch(err => console.log(err))
 
-
-
-const publicVapidKey =
-  "BDbBRpqdGBywczNL_6OFC5J_AJXqCiMXUEXUNBr2i6iYLaaxcmpPgjRX6RdOXjctwGKfnxeEUds-qsS1dn7J48o";
-const privateVapidKey = "LTmwGwqJSZ3oVC45hGETaJczGn6_8QaYspuu8tgMGVg";
-
+//Provide Vap ID cedentials 
 webpush.setVapidDetails(
   "mailto:test@test.com",
   publicVapidKey,
   privateVapidKey
 );
 
+//Send Push notificantions 
 server.post("/subscribe", (req, res,) => {
     let message = req.body.message                                                                      
     const subscription = req.body.subscription;

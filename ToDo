@@ -1,0 +1,6 @@
+Remove Device
+Remove Endpoint 
+convert fetch to axios 
+fix auth middleware --- bugged 
+
+put keys in enviroment varible **

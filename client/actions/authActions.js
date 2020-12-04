@@ -15,6 +15,7 @@ import {
 } from "./typesAction"
 const userURL = 'http://localhost:3000/api/users/register'
 const authURL = 'http://localhost:3000/api/auth/'
+const authLoadUserURL = "http://localhost:3000/api/users/"
 
 export const logout = () => {
     return {
@@ -24,18 +25,19 @@ export const logout = () => {
 
 export const loadUser = (dispatch, getState) => {
     dispatch({ type: USER_LOADING })
-    fetch(userURL, tokenConfig(getState))
+    fetch(authLoadUserURL, tokenConfig(getState))
         .then(res => dispatch({
             type: USER_LOADED,
             payload:res.data
         })
+          
+    )
             .catch(err => {
                 dispatch(returnErrors(err.response.data, err.response.status))
                 dispatch({
                 type:AUTH_ERROR
             })
         })
-        )
     
 }
 export const login = ({ email, password }) => dispatch => {
@@ -82,9 +84,9 @@ export const register = ({ name, email, password }) => dispatch => {
 }
 export const tokenConfig = getState => {
     const token = getState().auth.token
-        options = {
+        let options = {
         method: 'GET',
-        body: substring,
+
         headers: {
             "content-type": "application/json"
         }

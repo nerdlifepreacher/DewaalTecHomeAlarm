@@ -4,6 +4,8 @@ const webpush = require('web-push')
 const alarmRoutes = require('./routes/data')
 const auth = require('./routes/api/auth')
 const users = require('./routes/api/users')
+const endpoints = require('./routes/api/endpoints')
+const devices = require('./routes/api/devices')
 const server = express()
 const mongoose = require('mongoose')
 
@@ -22,6 +24,8 @@ server.use(express.json())
 server.use('/', alarmRoutes)
 server.use('/api/users', users)
 server.use('/api/auth', auth)
+server.use('/api/endpoints', endpoints)
+server.use('/api/devices', devices)
 
 //connect to mongo atlas cloud DB
 mongoose

@@ -65,6 +65,7 @@ class LoginModal extends React.Component {
             password
         }
         this.props.login(user)
+        // window.location.replace('/#/manage')
     }
     
     render() {
@@ -99,17 +100,17 @@ class LoginModal extends React.Component {
                                 placeholder="password"
                                 placeholder="email"
                                 onChange={this.handleOnChange}
-                            />
+                                />
+                            {/* <Link to="/manage"> */}
                             <Button color="dark" style={{ marginTop: '2rem' }} block>
-                                Login
+                                        Login
                             </Button>
+                            {/* </Link> */}
                         </FormGroup>
                         </Form>
-                        <div  style={{ marginTop: '2rem' }}> 
-                            <Link to="/register">
-                           
-                                <p className="text-center">Register?</p>
-                           
+                        <div> 
+                            <Link to="/register">     
+                                <p className="text-center" style={{fontSize: 'smaller'}}>Register</p>
                             </Link>
                         </div>
                 </ModalBody>

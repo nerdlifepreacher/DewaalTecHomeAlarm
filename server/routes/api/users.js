@@ -7,10 +7,15 @@ const JWT_SECRET = process.env.JWT_SECRET
 
 const User = require('../../models/user')
 
-router.get('/', (req, res) => {
-    User.find()
-        .sort({ date: -1 })
-        .then(User => res.json(user))
+router.get('/', async (req, res) => {
+  try {
+    const users = await User.find() 
+    if (!users) throw Error('No users exist')
+    res.json(users)
+  }
+  catch (e) {
+    res.status(400).json({msg: e.message})
+  }
 })
 
 router.post('/register', async (req, res) => {
@@ -33,8 +38,8 @@ router.post('/register', async (req, res) => {
             password: hash,
             email
         })
-        const savedUser = await NewUser.save();
-        if (!savedUser) throw Error('Something went wrong saving the user');
+        const savedUser = await NewUser.save()
+        if (!savedUser) throw Error('Something went wrong saving the user')
     
         const token = jwt.sign({ id: savedUser._id }, JWT_SECRET, {
           expiresIn: 3600
@@ -49,13 +54,13 @@ router.post('/register', async (req, res) => {
           }
         });
       } catch (e) {
-        res.status(400).json({ error: e.message });
+        res.status(400).json({ error: e.message })
       }
 })
 
 router.delete('/:id', (req, res) => {
     User.findById(req.params.id).then(user =>
-        user.remove().then(()=> res.json({success:true}))
+        user.remove().then(()=> res.json({ success: true }))
     )
     .catch(err => res.status(404).json({ success: false }))
     })

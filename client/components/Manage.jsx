@@ -18,67 +18,76 @@ import {
 } from 'reactstrap'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
+// import store from '../store'
+// import { loadUser } from '../actions/authActions'
 import { clearErrors } from '../actions/errorActions'
+import { register } from '../actions/endpointActions'
+import { registerDevice } from '../actions/deviceActions'
 const { detect } = require('detect-browser');
 const browser = detect();
 
-// const dotenv = require('dotenv');
-// const publicVapidKey = dotenv.process.env.PUBLICVAPIDKEY
 
 const publicVapidKey="BDbBRpqdGBywczNL_6OFC5J_AJXqCiMXUEXUNBr2i6iYLaaxcmpPgjRX6RdOXjctwGKfnxeEUds-qsS1dn7J48o"
 
 class Manage extends React.Component {
+      constructor(props) {
+    super(props);
+    
+  }
     state = {
-        name: '',
-        email: '',
-        msg: null
+        msg: null,
+        deviceID: '',
+        deviceName: '',
+        short_name: browser.name
     }
     
     static propTypes = {
         isAuthenticated: PropTypes.bool,
         error: PropTypes.object.isRequired,
-        clearErrors: PropTypes.func.isRequired
+        clearErrors: PropTypes.func.isRequired,
+        register: PropTypes.func.isRequired,
+        auth: PropTypes.object.isRequired,
+        registerDevice: PropTypes.func.isRequired,
     }
 
     handleOnChange = e => {
         this.setState({ [e.target.name]: e.target.value })
     }
 
-    handleOnSubmit = e => {
-        e.preventDefault()
-        const { name, email, password } = this.state
-        const newUser = {
-            name,
-            email,
-            password
+    async submitDevice() {
+        const { deviceID, deviceName } = this.state
+        const newDevice = {
+            deviceID,
+            deviceName,
+            userID:this.props.auth.user.id
         }
-
-        // this.props.register(newUser)
+        console.log(newDevice)
+        this.props.registerDevice(newDevice)
     }
-
-    async send() {
-    // Register Service Worker
-    console.log("Registering service worker...");
-    const register = await navigator.serviceWorker.register("./sw.js", {
-        scope: "/"
-    })
-    const subscription = await register.pushManager.subscribe({
-    userVisibleOnly: true,
-        applicationServerKey: publicVapidKey,
-        
-    })
-}
-
+    async submitEndpoint() {
+        // Register Service Worker
+        const register = await navigator.serviceWorker.register("./sw.js", {
+            scope: "/"
+        })
+        const subscription = await register.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: publicVapidKey,
+            })
+        const newEndpoint = {
+            email:this.props.auth.user.email,
+            shortName: this.state.short_name,
+            endpoint: subscription
+        }
+        console.log(newEndpoint)
+         this.props.register(newEndpoint)
+    }   
     render() {       
         const cardStyles = {
-        top: "35%",
-        margin: "0 auto",
-        width: "100%"
+            top: "35%",
+            margin: "0 auto",
+            width: "100%"
         }
         return (
-            // add devices_list to the right, 
-            // add logs to the righ5
-            // add votage graph 
             <div style={cardStyles}>
             <Container>               
                 <Row xs="2">
@@ -90,27 +99,27 @@ class Manage extends React.Component {
                              <CardSubtitle tag="h6" className="mb-4 text-muted">Add an alarm </CardSubtitle>
                         </CardTitle>
                         {this.state.msg ? (<Alert color="danger">{this.state.msg}</Alert>) : null}
-                        <Form onSubmit={this.handleOnSubmit}>
+                        <Form>
                             <FormGroup>
                                 <Label for="device_id">Device ID</Label>
                                 <Input
-                                    type="device_id"
-                                    name="device_id"
-                                    id="device_id"
-                                    placeholder="device_id"
+                                    type="deviceID"
+                                    name="deviceID"
+                                    id="deviceID"
+                                    placeholder="deviceID"
                                     className="mb-3"
                                     onChange={this.handleOnChange}
                                             />
                                 <Label for="device_name">Device Name </Label>
                                 <Input
-                                    type="device_name"
-                                    name="device_name"
-                                    id="device_name"
-                                    placeholder="garage"
-                                    className="device_name"
+                                    type="deviceName"
+                                    name="deviceName"
+                                    id="deviceName"
+                                    placeholder="Garage"
+                                    className="deviceName"
                                     onChange={this.handleOnChange}
                                 />
-                                <Button color="dark" style={{ marginTop: '2rem' }}>
+                                <Button color="dark" style={{ marginTop: '2rem' }} onClick={() =>this.submitDevice()}>
                                     Submit
                                 </Button>
                             </FormGroup>
@@ -137,18 +146,18 @@ class Manage extends React.Component {
                                 <h2>Register this Endpoint</h2>
                                 <CardSubtitle tag="h6" className="mb-4 text-muted">Add this browse to the list of enpoints re</CardSubtitle>
                             </CardTitle>
-                        <Form onSubmit={this.handleOnSubmit}>
+                        <Form onSubmit={this.submitEndpoint}>
                                 <FormGroup>
-                                    <Label for="register">Name this Endpoint</Label>
+                                    <Label for="short_name">Name this Endpoint</Label>
                                     <Input
-                                        type="register"
-                                        name="register"
-                                        id="register"
-                                        defaultValue={browser.name+" "+browser.os}
+                                        type="short_name"
+                                        name="short_name"
+                                        id="short_name"
+                                        placeholder={browser.name}
                                         className="mb-3"
                                         onChange={this.handleOnChange}
                                     />
-                                    <Button color="dark" style={{ marginTop: '2rem' }} onClick={() =>this.send()}> 
+                                    <Button color="dark" style={{ marginTop: '2rem' }} onClick={() =>this.submitEndpoint()}> 
                                         Register
                                     </Button>
                                 </FormGroup>
@@ -185,10 +194,10 @@ class Manage extends React.Component {
     }
 }
 const mapStateToProps = (state) => ({
-    isAuthenticated: state.auth.isAuthenticated,
-    error: state.error
+    error: state.error,
+    auth: state.auth
 })
 export default connect(
     mapStateToProps,
-    { clearErrors }
+    { registerDevice,register, clearErrors }
 )(Manage)

@@ -2,5 +2,7 @@ Remove Device
 Remove Endpoint 
 convert fetch to axios 
 fix auth middleware --- bugged 
-
+add google auth
+add password does match 
+on submit of message from alarm vifiy device id and only send to registered email
 put keys in enviroment varible **

@@ -7,7 +7,7 @@ const EndpointSchema = new Schema({
         required: true
     },
     endpoint: {
-        type: String,
+        type: JSON,
         required: true
     },
     shortName: {
@@ -15,4 +15,4 @@ const EndpointSchema = new Schema({
     }
 })
 
-module.exports = item = mongoose.model('user', EndpointSchema)
+module.exports = item = mongoose.model('endpoint', EndpointSchema)

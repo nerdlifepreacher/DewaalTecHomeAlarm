@@ -7,14 +7,17 @@ import {
     LOGOUT_SUCCESS,
     LOGOUT_FAIL,
     REGISTER_SUCCESS,
-    REGISTER_FAIL
+    REGISTER_FAIL,
+    RELOGIN_SUCCESS
 } from "../actions/typesAction"
+import { isAuthenticated, getUserTokenInfo} from '../utils/auth'
 
 const initialState = {
     token: localStorage.getItem('token'),
-    isAuthenticated: null,
+    // isAuthenticated: false,
+    isAuthenticated: isAuthenticated(),
     isLoading: false,
-    user:null
+    user: JSON.parse(localStorage.getItem('user')),
 }
 
 export default function (state = initialState, action) {
@@ -34,7 +37,14 @@ export default function (state = initialState, action) {
             }
         case LOGIN_SUCCESS:
         case REGISTER_SUCCESS:
+            const userObject = {
+                id: action.payload.user.id,
+                email: action.payload.user.email,
+                name: action.payload.user.name
+            }
+            const user = JSON.stringify(userObject)
             localStorage.setItem('token', action.payload.token)
+            localStorage.setItem('user', user)
             return {
                 ...state,
                 ...action.payload,

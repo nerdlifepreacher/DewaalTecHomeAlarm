@@ -8,8 +8,9 @@ import {
   FormGroup,
   Label,
   Input,
-  Alert
+    Alert,
 } from 'reactstrap'
+import { Link } from "react-router-dom";
 import { connect } from 'react-redux'
 import { register } from '../../actions/authActions'
 import PropTypes from 'prop-types'
@@ -114,9 +115,13 @@ class RegisterModal extends React.Component {
                                 />
                                 <Button color="dark" style={{ marginTop: '2rem' }} block>
                                     Register
-                    </Button>
+                                </Button>
                             </FormGroup>
-                        </Form>
+                        </Form>                                                        <div>
+                                <Link to="/">     
+                                    <p className="text-center" style={{fontSize: 'smaller'}}>Login</p>
+                                </Link>
+                            </div>
                     </ModalBody>
                 </Modal>
             </div>
@@ -125,7 +130,8 @@ class RegisterModal extends React.Component {
 }
 const mapStateToProps = (state) => ({
     isAuthenticated: state.auth.isAuthenticated,
-    error: state.error
+    error: state.error,
+    
 })
 export default connect(
     mapStateToProps,

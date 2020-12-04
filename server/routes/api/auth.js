@@ -7,7 +7,6 @@ require('dotenv').config()
 const JWT_SECRET = process.env.JWT_SECRET
 
 router.post('/', async (req, res) => {
-    console.log(req.body)
     const { email, password } = req.body
     if (!email || !password) {
         return res.status(400).json({ msg: 'Please enter all fields' })

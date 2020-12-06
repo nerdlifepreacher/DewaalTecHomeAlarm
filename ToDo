@@ -6,3 +6,6 @@ add google auth
 add password does match 
 on submit of message from alarm vifiy device id and only send to registered email
 put keys in enviroment varible **
+
+
+Have the delete funcation return a payload. fix update. 

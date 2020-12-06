@@ -14,15 +14,14 @@ import {
     Container,
     Row,
     Col,
+    CardText,
 
 } from 'reactstrap'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
-// import store from '../store'
-// import { loadUser } from '../actions/authActions'
 import { clearErrors } from '../actions/errorActions'
-import { register } from '../actions/endpointActions'
-import { registerDevice } from '../actions/deviceActions'
+import { deleteDevices, registerDevice, fetchDevices } from '../actions/deviceActions'
+import { fetchEndpoints, deleteEndpoint, registerEndpoint } from '../actions/endpointActions'
 const { detect } = require('detect-browser');
 const browser = detect();
 
@@ -33,7 +32,13 @@ class Manage extends React.Component {
       constructor(props) {
     super(props);
     
-  }
+    }
+    componentDidMount() {
+        const userID = this.props.auth.user.id
+        console.log(this.props)
+        this.props.dispatch(fetchDevices(userID))
+        this.props.dispatch(fetchEndpoints(userID))
+    }
     state = {
         msg: null,
         deviceID: '',
@@ -44,12 +49,14 @@ class Manage extends React.Component {
     static propTypes = {
         isAuthenticated: PropTypes.bool,
         error: PropTypes.object.isRequired,
-        clearErrors: PropTypes.func.isRequired,
-        register: PropTypes.func.isRequired,
-        auth: PropTypes.object.isRequired,
-        registerDevice: PropTypes.func.isRequired,
+        // clearErrors: PropTypes.func.isRequired,
+        // register: PropTypes.func.isRequired,
+        // auth: PropTypes.object.isRequired,
+        // registerDevice: PropTypes.func.isRequired,
+        // fetchDevices: PropTypes.func.isRequired,
+        // fetchEndpoints: PropTypes.func.isRequired
     }
-
+    
     handleOnChange = e => {
         this.setState({ [e.target.name]: e.target.value })
     }
@@ -61,11 +68,10 @@ class Manage extends React.Component {
             deviceName,
             userID:this.props.auth.user.id
         }
-        console.log(newDevice)
-        this.props.registerDevice(newDevice)
+        this.props.dispatch(registerDevice(newDevice))
     }
     async submitEndpoint() {
-        // Register Service Worker
+        const userID = this.props.auth.user.id
         const register = await navigator.serviceWorker.register("./sw.js", {
             scope: "/"
         })
@@ -74,25 +80,70 @@ class Manage extends React.Component {
             applicationServerKey: publicVapidKey,
             })
         const newEndpoint = {
-            email:this.props.auth.user.email,
+            userID:this.props.auth.user.id,
             shortName: this.state.short_name,
             endpoint: subscription
         }
-        console.log(newEndpoint)
-         this.props.register(newEndpoint)
+       this.props.dispatch(registerEndpoint(newEndpoint))
+ 
     }   
-    render() {       
+    async handleDeviceDeleteClick (deviceID) {
+        const userID = this.props.auth.user.id
+        console.log("handleDeviceDeleteClick " + deviceID)
+        this.props.dispatch(deleteDevices(deviceID, userID))
+
+    }
+    handleEndpointDeleteClick(endpointID) {
+        console.log(this.props.endpoints.endpoints[0]._id)
+        const userID = this.props.auth.user.id
+        this.props.dispatch(deleteEndpoint(endpointID))
+
+    }
+    render() {  
+        const deviceList = []
+        for (let i = 0; i < this.props.devices.devices.length; i++) {
+            deviceList.push(
+                <li key={i} style={{ listStyleType: "none" }}>
+                <span className="mr-3" >
+                    <i className="fas fa-minus-circle" onClick={() => this.handleDeviceDeleteClick(this.props.devices.devices[i]._id)}></i>
+                </span>
+                <span  style={{fontSize:"large"}}>
+                    {this.props.devices.devices[i].deviceName}
+            </span>
+                </li>
+            )
+        }
+        const endpointist = []
+
+        for (let i = 0; i < this.props.endpoints.endpoints.length; i++) {
+            endpointist.push(
+                <li key={i} style={{ listStyleType: "none" }}>
+                    <span className="mr-3" >
+                        <i className="fas fa-minus-circle" onClick={() => this.handleEndpointDeleteClick(this.props.endpoints.endpoints[i]._id)}></i>
+                    </span>
+                    <span  style={{fontSize:"large"}}>
+                        {this.props.endpoints.endpoints[i].shortName}
+                    </span>
+                </li>
+            )
+        }        
         const cardStyles = {
             top: "35%",
             margin: "0 auto",
-            width: "100%"
+            width: "100%",
+
+        }
+        const innerShadow = {
+            WebkitBoxShadow: "inset 0 0 40px #000000",
+            MozBoxShadow: "inset 0 0 40px #000000",
+            boxShadow: "inset 0 0 40px #000000"
         }
         return (
             <div style={cardStyles}>
             <Container>               
                 <Row xs="2">
                 <Col >
-                <Card className="mb-3">
+                <Card className="mb-3" style={innerShadow}> 
                     <CardBody>
                         <CardTitle cssModule={{'modal-title': 'w-100 text-center'}}>
                             <h2>Register Alarm</h2>
@@ -128,11 +179,13 @@ class Manage extends React.Component {
                     </Card>
                     </Col>
                     <Col>
-                        <Card>
+                        <Card className="mb-3" style={innerShadow}> 
                         <CardBody>
                             <CardTitle cssModule={{'modal-title': 'w-100 text-center'}}>
                                 <h3>Devices</h3>
-                                 <CardSubtitle tag="h6" className="mb-4 text-muted">Add an alarm </CardSubtitle>
+                                        <CardText>
+                                            {deviceList}
+                                        </CardText>
                             </CardTitle>
                         </CardBody>
                             </Card>
@@ -140,7 +193,7 @@ class Manage extends React.Component {
                     </Row>
                     <Row xs="2"> 
                     <Col>
-                    <Card className="mb-3">
+                    <Card className="mb-3" style={innerShadow}> 
                         <CardBody>
                             <CardTitle cssModule={{'modal-title': 'w-100 text-center'}}>
                                 <h2>Register this Endpoint</h2>
@@ -166,11 +219,13 @@ class Manage extends React.Component {
                     </Card>
                     </Col>
                     <Col>                    
-                    <Card className="mb-3">
+                    <Card className="mb-3" style={innerShadow}> 
                             <CardBody>
                             <CardTitle cssModule={{'modal-title': 'w-100 text-center'}}>
                                 <h3>Endpoints</h3>
-                                 <CardSubtitle tag="h6" className="mb-4 text-muted">Add an alarm </CardSubtitle>
+                                <CardText>
+                                    {endpointist}
+                                </CardText>
                             </CardTitle>                        
                             </CardBody>
                         </Card>
@@ -178,7 +233,7 @@ class Manage extends React.Component {
             </Row>
              <Row xs="1">
                 <Col>
-                <Card>
+                <Card className="mb-3" style={innerShadow}> 
                 <CardBody>
                     <CardTitle cssModule={{'modal-title': 'w-100 text-center'}}>
                         <h2>Logs</h2>
@@ -195,9 +250,16 @@ class Manage extends React.Component {
 }
 const mapStateToProps = (state) => ({
     error: state.error,
-    auth: state.auth
+    auth: state.auth,
+    devices: state.devices,
+    endpoints: state.endpoints
+    
+})
+// { fetchEndpoints, registerDevice, register, clearErrors, fetchDevices, deleteDevices, deleteEndpoint}
+const mapDispatchToProps = dispatch => ({
+   dispatch                // ← Add this
 })
 export default connect(
-    mapStateToProps,
-    { registerDevice,register, clearErrors }
+    mapStateToProps,mapDispatchToProps
+    
 )(Manage)

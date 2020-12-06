@@ -7,7 +7,6 @@ import Main from './Main'
 
   export function App({ auth }) {
 
-  // render() {
     return (    
       <Router>
         <AppNavbar />

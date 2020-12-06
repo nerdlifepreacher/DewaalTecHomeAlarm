@@ -14,7 +14,6 @@ import { isAuthenticated, getUserTokenInfo} from '../utils/auth'
 
 const initialState = {
     token: localStorage.getItem('token'),
-    // isAuthenticated: false,
     isAuthenticated: isAuthenticated(),
     isLoading: false,
     user: JSON.parse(localStorage.getItem('user')),

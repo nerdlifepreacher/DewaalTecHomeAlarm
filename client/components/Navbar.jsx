@@ -20,10 +20,10 @@ static propTypes = {
     }
     render() {
       const navBarStyle = {
-	      'WebkitBoxShadow': '0 0 10px black',
-	      'MozBoxShadow': '0 0 0 10px black',
-        'boxShadow': '0 0 10px black',
-        'opacity': '0.8'
+	      WebkitBoxShadow: '0 0 10px black',
+	      MozBoxShadow: '0 0 0 10px black',
+        boxShadow: '0 0 10px black',
+        opacity: '0.8'
       }
       
       return (
